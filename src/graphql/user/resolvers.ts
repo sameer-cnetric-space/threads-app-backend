@@ -1,6 +1,21 @@
-import UserService, { CreateUserPayload } from "../../services/user";
+import UserService, {
+  CreateUserPayload,
+  GetUserTokenPayload,
+} from "../../services/user";
 
-const queries = {};
+const queries = {
+  getUserToken: async (_: any, paylaod: GetUserTokenPayload) => {
+    const token = await UserService.getUserToken(paylaod);
+    return token;
+  },
+  getCurrentLoggedInUser: async (_: any, parameters: any, context: any) => {
+    if (context && context.user) {
+      const user = await UserService.getUserById(context.user.id);
+      return user;
+    }
+    throw new Error("I dont know Who are you");
+  },
+};
 
 const mutations = {
   createUser: async (_: any, paylaod: CreateUserPayload) => {
