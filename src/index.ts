@@ -18,8 +18,16 @@ async function init() {
     "/graphql",
     expressMiddleware(await gqlServerinit(), {
       context: async ({ req }) => {
-        const token = req.headers["token"];
         try {
+          const authHeader = req.headers["authorization"];
+          if (!authHeader) {
+            throw new Error("Authorization header missing");
+          }
+
+          const token = authHeader.split(" ")[1];
+          if (!token) {
+            throw new Error("Authorization token missing");
+          }
           const user = UserService.decodeJWTToken(token as string);
           return { user };
         } catch (error) {
